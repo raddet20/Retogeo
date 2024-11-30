@@ -1,0 +1,477 @@
+<html><head><base href="." />
+<meta charset="UTF-8">
+<title>¡Adivina el País!</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 400' width='800' height='400' opacity='0.1'%3E%3Cpath fill='%23ffffff' d='M143,24c0,0-38-8-65,25s-82.1,140.6-82.1,140.6L0,215l24,24c0,0,87-94,106-110s54-35,54-35L143,24z'/%3E%3Cpath fill='%23ffffff' d='M400,0c0,0-50,14-77,47s-82.1,140.6-82.1,140.6L235,263l24,24c0,0,87-94,106-110s54-35,54-35L400,0z'/%3E%3Cpath fill='%23ffffff' d='M657,24c0,0-38-8-65,25s-82.1,140.6-82.1,140.6L514,215l24,24c0,0,87-94,106-110s54-35,54-35L657,24z'/%3E%3Cpath fill='%23ffffff' d='M143,224c0,0-38-8-65,25s-82.1,140.6-82.1,140.6L0,415l24,24c0,0,87-94,106-110s54-35,54-35L143,224z'/%3E%3Cpath fill='%23ffffff' d='M400,200c0,0-50,14-77,47s-82.1,140.6-82.1,140.6L235,463l24,24c0,0,87-94,106-110s54-35,54-35L400,200z'/%3E%3Cpath fill='%23ffffff' d='M657,224c0,0-38-8-65,25s-82.1,140.6-82.1,140.6L514,415l24,24c0,0,87-94,106-110s54-35,54-35L657,224z'/%3E%3C/svg%3E");
+        background-repeat: repeat;
+        background-size: 400px 200px;
+    }
+
+    .container {
+        background: rgba(255, 255, 255, 0.15);
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        backdrop-filter: blur(4px);
+        max-width: 600px;
+        width: 90%;
+        text-align: center;
+    }
+
+    .input-section {
+        margin: 20px 0;
+    }
+
+    input {
+        padding: 10px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        margin-right: 10px;
+        width: 200px;
+    }
+
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+
+    .hint {
+        margin: 20px 0;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+    }
+
+    .stats {
+        margin-top: 20px;
+        font-size: 0.9em;
+    }
+
+    .globe {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 20px;
+        animation: rotate 10s linear infinite;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .message {
+        color: #FFD700;
+        margin: 10px 0;
+        font-weight: bold;
+    }
+
+    .flags-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+        max-width: 100%;
+    }
+
+    .flag {
+        width: 60px;
+        height: 40px;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .game-controls {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .restart-btn {
+        background-color: #2196F3;
+    }
+
+    .surrender-btn {
+        background-color: #ff9800;
+    }
+
+    .surrender-btn:hover {
+        background-color: #f57c00;
+    }
+
+    .color-picker-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.15);
+        padding: 10px;
+        border-radius: 8px;
+        backdrop-filter: blur(4px);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .color-picker-container label {
+        color: white;
+        font-size: 14px;
+    }
+
+    .color-picker-container input[type="color"] {
+        width: 50px;
+        height: 30px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+    <div class="color-picker-container">
+        <label for="backgroundColorPicker">Color de fondo:</label>
+        <input type="color" id="backgroundColorPicker" value="#1e3c72">
+    </div>
+    <div class="container">
+        <svg class="globe" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="#ADD8E6" stroke-width="2"/>
+            <path d="M50,5 Q75,25 50,45 T50,85" fill="none" stroke="#ADD8E6" stroke-width="2"/>
+            <path d="M5,50 Q25,75 45,50 T85,50" fill="none" stroke="#ADD8E6" stroke-width="2"/>
+        </svg>
+        <h1>¡Adivina el País!</h1>
+        <p>Intenta adivinar el país en el que estoy pensando...</p>
+        <div class="hint" id="hint">
+            ¡Primera pista: Es un país que existe en la actualidad! 😉
+        </div>
+        <div class="input-section">
+            <input type="text" id="countryGuess" placeholder="Escribe un país...">
+            <button onclick="checkGuess()">Adivinar</button>
+        </div>
+        <div class="message" id="message"></div>
+        <div class="stats">
+            Intentos: <span id="attempts">0</span>
+        </div>
+        <div class="flags-container" id="flagsContainer"></div>
+        <div class="game-controls">
+            <button class="restart-btn" onclick="initGame()">Reiniciar Juego</button>
+            <button class="surrender-btn" onclick="surrender()">Rendirse</button>
+        </div>
+    </div>
+
+<script>
+const countries = {
+    "Afganistán": {
+        hints: [
+            "Este país está en Asia Central",
+            "Su capital es Kabul",
+            "País montañoso con el Hindu Kush",
+            "Limita con Pakistán e Irán",
+            "Fue parte de la Ruta de la Seda"
+        ]
+    },
+    "Albania": {
+        hints: [
+            "Este país está en los Balcanes",
+            "Su capital es Tirana",
+            "Tiene costa en el Mar Adriático",
+            "País con influencia otomana",
+            "Madre Teresa nació aquí"
+        ]
+    },
+    "Alemania": {
+        hints: [
+            "Este país está en Europa Central",
+            "Su capital es Berlín",
+            "Famoso por su cerveza y salchichas",
+            "País donde se inventó el automóvil",
+            "Tiene el festival Oktoberfest"
+        ]
+    },
+    "Argentina": {
+        hints: [
+            "País ubicado en Sudamérica",
+            "Su capital es Buenos Aires",
+            "Famoso por el tango y el mate",
+            "Hogar de la Patagonia",
+            "Lionel Messi es de este país"
+        ]
+    },
+    "Australia": {
+        hints: [
+            "Es un continente y país a la vez",
+            "Su capital es Canberra",
+            "Hogar de canguros y koalas",
+            "Tiene la Gran Barrera de Coral",
+            "El Outback ocupa gran parte de su territorio"
+        ]
+    },
+    "Brasil": {
+        hints: [
+            "El país más grande de Sudamérica",
+            "Su capital es Brasilia",
+            "Hogar del Amazonas",
+            "Famoso por el Carnaval y el fútbol",
+            "Tiene la estatua del Cristo Redentor"
+        ]
+    },
+    "Canadá": {
+        hints: [
+            "Segundo país más grande del mundo",
+            "Su capital es Ottawa",
+            "Conocido por sus lagos y bosques",
+            "La hoja de arce es su símbolo",
+            "Famoso por el jarabe de maple"
+        ]
+    },
+    "China": {
+        hints: [
+            "País más poblado del mundo",
+            "Su capital es Pekín",
+            "Tiene la Gran Muralla",
+            "Inventaron el papel y la brújula",
+            "Famoso por su comida y medicina tradicional"
+        ]
+    },
+    "España": {
+        hints: [
+            "País en la península ibérica",
+            "Su capital es Madrid",
+            "Famoso por la paella y tapas",
+            "Tiene la Sagrada Familia",
+            "La siesta es una tradición aquí"
+        ]
+    },
+    "Francia": {
+        hints: [
+            "País en Europa Occidental",
+            "Su capital es París",
+            "Tiene la Torre Eiffel",
+            "Famoso por sus vinos y quesos",
+            "Cuna de la Revolución Francesa"
+        ]
+    },
+    "Italia": {
+        hints: [
+            "País con forma de bota",
+            "Su capital es Roma",
+            "Famoso por la pizza y pasta",
+            "Tiene el Coliseo Romano",
+            "Cuna del Renacimiento"
+        ]
+    },
+    "Japón": {
+        hints: [
+            "País insular en Asia Oriental",
+            "Su capital es Tokio",
+            "Tierra del sol naciente",
+            "Famoso por el sushi y anime",
+            "Tiene el Monte Fuji"
+        ]
+    },
+    "México": {
+        hints: [
+            "País en América del Norte",
+            "Su capital es Ciudad de México",
+            "Famoso por sus tacos y tequila",
+            "Tiene pirámides mayas",
+            "Hogar de las ruinas de Teotihuacán"
+        ]
+    },
+    "Reino Unido": {
+        hints: [
+            "País insular en Europa",
+            "Su capital es Londres",
+            "Tiene el Big Ben",
+            "Famoso por el té y fish and chips",
+            "Hogar de la familia real"
+        ]
+    },
+    "Rusia": {
+        hints: [
+            "País más grande del mundo",
+            "Su capital es Moscú",
+            "Tiene la Plaza Roja",
+            "Famoso por el ballet y vodka",
+            "Se extiende por dos continentes"
+        ]
+    }
+};
+
+let currentCountry;
+let attempts = 0;
+let currentHintIndex = 0;
+let guessedCountries = new Set();
+let usedCountries = new Set();
+
+function addFlagToContainer(country) {
+    if (!guessedCountries.has(country)) {
+        guessedCountries.add(country);
+        const flagsContainer = document.getElementById('flagsContainer');
+        const flagImg = document.createElement('img');
+        flagImg.className = 'flag';
+        flagImg.alt = `Bandera de ${country}`;
+        flagImg.src = `https://flagcdn.com/w80/${getCountryCode(country).toLowerCase()}.png`;
+        flagsContainer.appendChild(flagImg);
+    }
+}
+
+function getCountryCode(country) {
+    const countryMapping = {
+        "afganistán": "af", "albania": "al", "alemania": "de", "andorra": "ad", "angola": "ao",
+        "antigua y barbuda": "ag", "arabia saudita": "sa", "argelia": "dz", "argentina": "ar",
+        "armenia": "am", "australia": "au", "austria": "at", "azerbaiyán": "az", "bahamas": "bs",
+        "bangladés": "bd", "barbados": "bb", "baréin": "bh", "bélgica": "be", "belice": "bz",
+        "benín": "bj", "bielorrusia": "by", "birmania": "mm", "bolivia": "bo",
+        "bosnia y herzegovina": "ba", "botsuana": "bw", "brasil": "br", "brunéi": "bn",
+        "bulgaria": "bg", "burkina faso": "bf", "burundi": "bi", "bután": "bt",
+        "cabo verde": "cv", "camboya": "kh", "camerún": "cm", "canadá": "ca", "catar": "qa",
+        "chad": "td", "chile": "cl", "china": "cn", "chipre": "cy", "ciudad del vaticano": "va",
+        "colombia": "co", "comoras": "km", "congo": "cg", "corea del norte": "kp",
+        "corea del sur": "kr", "costa de marfil": "ci", "costa rica": "cr", "croacia": "hr",
+        "cuba": "cu", "dinamarca": "dk", "dominica": "dm", "ecuador": "ec", "egipto": "eg",
+        "el salvador": "sv", "emiratos árabes unidos": "ae", "eritrea": "er", "eslovaquia": "sk",
+        "eslovenia": "si", "españa": "es", "estados unidos": "us", "estonia": "ee",
+        "esuatini": "sz", "etiopía": "et", "filipinas": "ph", "finlandia": "fi", "fiyi": "fj",
+        "francia": "fr", "gabón": "ga", "gambia": "gm", "georgia": "ge", "ghana": "gh",
+        "granada": "gd", "grecia": "gr", "guatemala": "gt", "guinea": "gn", "guinea-bisáu": "gw",
+        "guinea ecuatorial": "gq", "guyana": "gy", "haití": "ht", "honduras": "hn",
+        "hungría": "hu", "india": "in", "indonesia": "id", "irak": "iq", "irán": "ir",
+        "irlanda": "ie", "islandia": "is", "islas marshall": "mh", "islas salomón": "sb",
+        "israel": "il", "italia": "it", "jamaica": "jm", "japón": "jp", "jordania": "jo",
+        "kazajistán": "kz", "kenia": "ke", "kirguistán": "kg", "kiribati": "ki", "kosovo": "xk",
+        "kuwait": "kw", "laos": "la", "lesoto": "ls", "letonia": "lv", "líbano": "lb",
+        "liberia": "lr", "libia": "ly", "liechtenstein": "li", "lituania": "lt",
+        "luxemburgo": "lu", "macedonia del norte": "mk", "madagascar": "mg", "malasia": "my",
+        "malaui": "mw", "maldivas": "mv", "malí": "ml", "malta": "mt", "marruecos": "ma",
+        "mauricio": "mu", "mauritania": "mr", "méxico": "mx", "micronesia": "fm",
+        "moldavia": "md", "mónaco": "mc", "mongolia": "mn", "montenegro": "me",
+        "mozambique": "mz", "namibia": "na", "nauru": "nr", "nepal": "np", "nicaragua": "ni",
+        "níger": "ne", "nigeria": "ng", "noruega": "no", "nueva zelanda": "nz", "omán": "om",
+        "países bajos": "nl", "pakistán": "pk", "palaos": "pw", "panamá": "pa",
+        "papúa nueva guinea": "pg", "paraguay": "py", "perú": "pe", "polonia": "pl",
+        "portugal": "pt", "reino unido": "gb", "república centroafricana": "cf",
+        "república checa": "cz", "república del congo": "cg",
+        "república democrática del congo": "cd", "república dominicana": "do", "ruanda": "rw",
+        "rumania": "ro", "rusia": "ru", "samoa": "ws", "san cristóbal y nieves": "kn",
+        "san marino": "sm", "san vicente y las granadinas": "vc", "santa lucía": "lc",
+        "santo tomé y príncipe": "st", "senegal": "sn", "serbia": "rs", "seychelles": "sc",
+        "sierra leona": "sl", "singapur": "sg", "siria": "sy", "somalia": "so",
+        "sri lanka": "lk", "sudáfrica": "za", "sudán": "sd", "sudán del sur": "ss",
+        "suecia": "se", "suiza": "ch", "surinam": "sr", "tailandia": "th", "tanzania": "tz",
+        "tayikistán": "tj", "timor oriental": "tl", "togo": "tg", "tonga": "to",
+        "trinidad y tobago": "tt", "túnez": "tn", "turquía": "tr", "turkmenistán": "tm",
+        "tuvalu": "tv", "ucrania": "ua", "uganda": "ug", "uruguay": "uy", "uzbekistán": "uz",
+        "vanuatu": "vu", "venezuela": "ve", "vietnam": "vn", "yemen": "ye", "yibuti": "dj",
+        "zambia": "zm", "zimbabue": "zw"
+    };
+    return countryMapping[country.toLowerCase()] || "xx";
+}
+
+function initGame() {
+    const countryNames = Object.keys(countries);
+    
+    // If all countries have been used, reset the used countries
+    if (usedCountries.size >= countryNames.length) {
+        usedCountries.clear();
+    }
+    
+    // Get available countries (not yet used)
+    const availableCountries = countryNames.filter(country => !usedCountries.has(country));
+    
+    // Select random country from available ones
+    currentCountry = availableCountries[Math.floor(Math.random() * availableCountries.length)];
+    
+    // Add selected country to used set
+    usedCountries.add(currentCountry);
+    
+    // Reset other game state
+    attempts = 0;
+    currentHintIndex = 0;
+    guessedCountries.clear();
+    document.getElementById('attempts').textContent = attempts;
+    document.getElementById('hint').textContent = "¡Primera pista: Es un país que existe en la actualidad! 😉";
+    document.getElementById('message').textContent = "";
+    document.getElementById('countryGuess').value = "";
+    document.getElementById('flagsContainer').innerHTML = "";
+}
+
+function checkGuess() {
+    const guess = document.getElementById('countryGuess').value.trim();
+    attempts++;
+    document.getElementById('attempts').textContent = attempts;
+
+    if (guess.toLowerCase() === currentCountry.toLowerCase()) {
+        document.getElementById('message').textContent = `¡Felicitaciones! ¡Has adivinado correctamente en ${attempts} intentos!`;
+        addFlagToContainer(currentCountry);
+        setTimeout(() => {
+            if (confirm("¿Quieres jugar otra vez?")) {
+                initGame();
+            }
+        }, 1500);
+    } else {
+        addFlagToContainer(guess);
+        if (currentHintIndex < countries[currentCountry].hints.length) {
+            document.getElementById('hint').textContent = countries[currentCountry].hints[currentHintIndex];
+            currentHintIndex++;
+        }
+        
+        const motivationalMessages = [
+            "¡Buen intento! Sigue así...",
+            "¡Casi lo tienes! Una pista más te ayudará",
+            "¡No te rindas! Vas por buen camino",
+            "¡Cada intento te acerca más a la respuesta!"
+        ];
+        
+        document.getElementById('message').textContent = 
+            motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
+    }
+    document.getElementById('countryGuess').value = "";
+}
+
+function surrender() {
+    document.getElementById('message').textContent = `El país correcto era: ${currentCountry}`;
+    addFlagToContainer(currentCountry);
+    setTimeout(() => {
+        if (confirm("¿Quieres intentar un nuevo país?")) {
+            initGame();
+        }
+    }, 2000);
+}
+
+document.getElementById('countryGuess').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        checkGuess();
+    }
+});
+
+// Cambiar el color de fondo con el selector de color
+document.getElementById('backgroundColorPicker').addEventListener('change', function(e) {
+    document.body.style.background = e.target.value;
+});
+
+// Iniciar el juego cuando carga la página
+initGame();
+</script>
+</body>
+</html>
