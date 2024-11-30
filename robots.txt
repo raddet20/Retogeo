@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://raddet20.github.io/Retogeo/sitemap.xml
